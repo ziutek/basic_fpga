@@ -7,7 +7,11 @@ class Blinky(Elaboratable):
 		m = Module()
 
 		counter = Signal(26)
-		m.d.sync += counter.eq(counter + 1)
+
+		btn0 = platform.request("user_btn", 0)
+
+		with m.If(btn0):
+			m.d.sync += counter.eq(counter + 1)
 
 		led0 = platform.request("user_led", 0)
 		led1 = platform.request("user_led", 1)
