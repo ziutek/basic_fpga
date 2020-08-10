@@ -7,7 +7,6 @@ module top(
 );
 
 wire loop;
-wire sysClk;
 wire clk100;
 
 PLL_BASE #(
@@ -46,6 +45,8 @@ PLL_BASE #(
 	.CLKIN(extClk50),
 	.RST(1'b0)
 );
+
+wire sysClk;
 
 BUFG bufg(.O (sysClk), .I (clk100));
 

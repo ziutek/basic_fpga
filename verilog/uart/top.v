@@ -4,44 +4,49 @@ module top(
 	input wire clk,
 	input wire rx,
 	output reg [7:0] out,
-	output reg [1:0] state
+	output reg valid
 );
 
-initial state = idle;
+localparam IDLE  = 0;
+localparam START = 1;
+localparam DATA  = 2;
+localparam STOP  = 3;
 
-localparam idle = 0;
-localparam start = 1;
-localparam data = 2;
-localparam stop = 3;
-
-//reg [1:0] state = idle;
+reg [1:0] state = IDLE;
 reg [3:0] subCnt;
 reg [3:0] bitCnt;
 reg       carry;
 
 always @(posedge clk) begin
-	{carry, subCnt} <= subCnt + 1'b1;
-	case (state)
-	idle:
+	if (state == IDLE) begin
 		if (rx == 0) begin
-			subCnt <= 8;
-			state <= start;
+			subCnt <= 9;
+			state <= START;
 		end
-	start:
-		if (carry) begin
-			bitCnt <= 0;
-			out <= 0;
-			state <= data;
-		end
-	data:
-		if (carry) begin
-			out <= {out[6:0], rx};
-			bitCnt <= bitCnt + 1'b1;
-			state <= stop;
-		end
-	default: // stop
-		if (subCnt[3]) state <= idle;
-	endcase
+	end else begin
+		case (state)
+		START:
+			if (carry) begin
+				bitCnt <= 1;
+				state <= DATA;
+			end
+		DATA:
+			if (carry) begin
+				out <= {rx, out[7:1]};
+				if (bitCnt[3]) begin
+					valid <= 1;
+					state <= STOP;
+				end
+				bitCnt <= bitCnt + 1'b1;
+			end
+		default: // STOP
+			begin
+				valid <= 0;
+				if (carry) state <= IDLE;
+			end
+		endcase
+		{carry, subCnt} <= subCnt + 1'b1;
+	end
 end
 
 endmodule

@@ -4,10 +4,14 @@
 #include "obj_dir/Vtop.h"
 
 void ticks(Vtop *tb, int n) {
+	n *= 2;
 	for (int i = 0; i < n; i++) {
 		tb->clk = i & 1;
 		tb->eval();
-		printf("%d  %d %d\n", tb->clk, tb->rx, tb->state);
+		printf(
+			"%x  %x  %02x  %x  '%c'\n",
+			tb->clk, tb->rx, tb->out, tb->valid, tb->valid ? tb->out : ' '
+		);
 	}
 	printf("--\n");
 }
@@ -27,8 +31,6 @@ void uart(Vtop *tb, char *tx) {
 		// stop bit
 		tb->rx = 1;
 		ticks(tb, 16);
-
-		printf("char: %c\n", tb->out);
 	}
 }
 
@@ -39,7 +41,7 @@ int main(int argc, char **argv) {
 	tb->rx = 1;
 	ticks(tb, 10);
 
-	char tx[] = "$1";
+	char tx[] = "$abcdABCD";
 
 	uart(tb, tx);
 }
