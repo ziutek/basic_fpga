@@ -1,52 +1,47 @@
 `default_nettype none
 
 module top(
-	input wire clk,
-	input wire rx,
-	output reg [7:0] out,
-	output reg valid
+	input wire clk50,
+	input wire uartRx,
+	output reg led0,
+	output reg led1
 );
 
-localparam IDLE  = 0;
-localparam START = 1;
-localparam DATA  = 2;
-localparam STOP  = 3;
+reg [8:0] uartCnt;
 
-reg [1:0] state = IDLE;
-reg [3:0] subCnt;
-reg [3:0] bitCnt;
-reg       carry;
+localparam uartDiv = 50_000_000 * 16 / 115_200;
 
-always @(posedge clk) begin
-	if (state == IDLE) begin
-		if (rx == 0) begin
-			subCnt <= 9;
-			state <= START;
-		end
-	end else begin
-		case (state)
-		START:
-			if (carry) begin
-				bitCnt <= 1;
-				state <= DATA;
-			end
-		DATA:
-			if (carry) begin
-				out <= {rx, out[7:1]};
-				if (bitCnt[3]) begin
-					valid <= 1;
-					state <= STOP;
-				end
-				bitCnt <= bitCnt + 1'b1;
-			end
-		default: // STOP
-			begin
-				valid <= 0;
-				if (carry) state <= IDLE;
-			end
-		endcase
-		{carry, subCnt} <= subCnt + 1'b1;
-	end
+always @(posedge clk50) begin
+	uartCnt <= (uartCnt < uartDiv) ? uartCnt + 1'b1 : 9'b0;
 end
+
+wire [7:0] uartOut;
+wire uartValid;
+
+uart u (
+	.clk(uartCnt[8]),
+	.rx(uartRx),
+	.out(uartOut),
+	.valid(uartValid)
+);
+
+initial led0 = 1;
+initial led1 = 1;
+
+always @(posedge uartValid) case (uartOut)
+8'h30: begin
+		led0 <= 0;
+		led1 <= 1;
+	end
+8'h31: begin
+		led1 <= 0;
+		led0 <= 1;
+	end
+default: begin
+		led0 <= 1;
+		led1 <= 1;
+	end
+endcase
+
 
 endmodule
