@@ -1,21 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "verilated.h"
-#include "obj_dir/Vtop.h"
+#include "verilated_vcd_c.h"
+#include "obj_dir/Vcounter.h"
 
-void ticks(Vtop *tb, int n) {
-	n *= 2;
-	for (int i = 0; i < n; i++) {
-		tb->clk = i & 1;
-		tb->eval();
-		printf("%d  %d\n", tb->clk, tb->count);
-	}
+VerilatedVcdC *v;
+int timeStamp;
+
+void tick(Vcounter *tb) {
+	tb->clk = 0;
+	tb->eval();
+	v->dump(timeStamp);
+	timeStamp++;
+	tb->clk = 1;
+	tb->eval();
+	v->dump(timeStamp);
+	timeStamp++;
 }
 
 
 int main(int argc, char **argv) {
 	Verilated::commandArgs(argc, argv);
-	Vtop *tb = new Vtop;
+	Verilated::traceEverOn(true);
 
-	ticks(tb, 20);
+	v = new VerilatedVcdC;
+	v->open("coutner.vcd");
+
+	Vcounter *tb = new Vcounter;
+	tb->trace(v, 99);
+	tb->reset = 1;
+	for (int i = 0; i < 5; i++) {
+		tick(tb);
+	}
+	tb->reset = 0;
+	for (int i = 0; i < 20; i++) {
+		tick(tb);
+	}
+
+	v->close();
 }

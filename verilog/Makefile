@@ -187,10 +187,10 @@ endif
 ###########################################################################
 
 sim: sim.cpp obj_dir/V$(TOPLEVEL)__ALL.a
-	g++ -I /usr/share/verilator/include /usr/share/verilator/include/verilated.cpp sim.cpp obj_dir/V$(TOPLEVEL)__ALL.a  -o sim
+	g++ -I /usr/share/verilator/include /usr/share/verilator/include/verilated.cpp /usr/share/verilator/include/verilated_vcd_c.cpp sim.cpp obj_dir/V$(TOPLEVEL)__ALL.a  -o sim
 
 obj_dir/V$(TOPLEVEL)__ALL.a: $(VSOURCE)
-	verilator -Wall -cc $(VSOURCE)
+	verilator -Wall --trace -cc $(VSOURCE)
 	make -C obj_dir -f V$(TOPLEVEL).mk
 
 # vim: set filetype=make: #
