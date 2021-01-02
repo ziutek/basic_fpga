@@ -1,3 +1,8 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.numeric_std.ALL;
+
 entity PWM is
 	generic (
 		pwmBits:   integer;
@@ -5,40 +10,34 @@ entity PWM is
 	);
 	port (
 		clk:       in  std_logic;
-		rst:       in  std_logic;
 		dutyCycle: in  unsigned(pwmBits-1 downto 0);
 		pwmOut:    out std_logic
 	);
 end entity;
 
-architecture sync of PWM is
+architecture rtl of PWM is
 	signal pwmCnt: unsigned(pwmBits-1 downto 0);
 	signal clkCnt: integer range 0 to clkCntLen-1;
 begin
 	ClkCntProc:
 	process(clk) begin if rising_edge(clk) then
-		if rst = '1' then
+		if clkCnt = clkCntLen-1 then
 			clkCnt <= 0;
-		else if clkCnt < clkCntLen-1 then
-			clkCnt <= clkCnt + 1;
 		else
-			clk_cnt <= 0;
+			clkCnt <= clkCnt + 1;
 		end if;
 	end if; end process;
 
 	PWMProc:
 	process(clk) begin if rising_edge(clk) then
-		if rst = '1' then
-			pwmCnt <= (others => '0');
-			pwmOut <= '0';
-		else if clkCntLen=1 or clkCnt=0 then
+		if clkCntLen=1 or clkCnt=0 then
 			pwmCnt <= pwmCnt + 1;
 			pwmOut <= '0';
 			if pwmCnt = unsigned(to_signed(-2, pwmCnt'length)) then
-				pwmCnt <= (others => '0');
+				pwmCnt <= unsigned(0);
 			end if;
 			if pwmCnt < dutyCycle then
-				pwmCut <= '1';
+				pwmOut <= '1';
 			end if;
 		end if;
 	end if; end process;

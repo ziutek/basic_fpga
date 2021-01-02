@@ -30,7 +30,7 @@ CONSTRAINTS     ?= $(PROJECT).ucf
 BITFILE         ?= build/$(PROJECT).bit
 
 COMMON_OPTS     ?= -intstyle xflow
-XST_OPTS        ?=
+XST_OPTS        ?= -opt_mode area -opt_level 1
 NGDBUILD_OPTS   ?=
 MAP_OPTS        ?= -mt 2
 PAR_OPTS        ?= -mt 4
@@ -73,6 +73,8 @@ TEST_EXES = $(foreach test,$(TEST_NAMES),build/isim_$(test)$(EXE))
 RUN = @echo "=-=-=-=-= $(1) =-=-=-=-="; \
 	cd build && $(XILINX)/bin/$(XILINX_PLATFORM)/$(1)
 
+WERR = sed 's/"\(.*\)" Line \([0-9]\+\):/\1:\2:/g' |awk 'BEGIN{r=0} /ERROR|WARNING/{r=1} 1; END{exit(r)}'
+
 # isim executables don't work without this
 export XILINX
 
@@ -113,10 +115,10 @@ build/$(PROJECT).scr: project.cfg
 	    "-p $(TARGET_PART)" \
 	    > build/$(PROJECT).scr
 
-$(BITFILE): project.cfg $(VSOURCE) $(CONSTRAINTS) build/$(PROJECT).prj build/$(PROJECT).scr
+$(BITFILE): project.cfg $(VSOURCE) $(VHDSOURCE) $(CONSTRAINTS) build/$(PROJECT).prj build/$(PROJECT).scr
 	@mkdir -p build
 	$(call RUN,xst) $(COMMON_OPTS) \
-	    -ifn $(PROJECT).scr
+	    -ifn $(PROJECT).scr 2>&1 | $(WERR)
 	$(call RUN,ngdbuild) $(COMMON_OPTS) $(NGDBUILD_OPTS) \
 	    -p $(TARGET_PART) -uc ../$(CONSTRAINTS) \
 	    $(PROJECT).ngc $(PROJECT).ngd

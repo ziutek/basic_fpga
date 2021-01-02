@@ -3,5 +3,5 @@
 name=$(basename $(pwd))
 
 mkdir -p sim
-ghdl -a --workdir=sim --std=08 *.vhdl
-ghdl -r --workdir=sim --std=08 ${name}Sim --vcd=sim.vcd $@
+ghdl -a --workdir=sim *.vhdl
+ghdl -r --workdir=sim ${name}Sim --vcd=sim.vcd $@
