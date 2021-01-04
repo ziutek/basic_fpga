@@ -73,7 +73,7 @@ TEST_EXES = $(foreach test,$(TEST_NAMES),build/isim_$(test)$(EXE))
 RUN = @echo "=-=-=-=-= $(1) =-=-=-=-="; \
 	cd build && $(XILINX)/bin/$(XILINX_PLATFORM)/$(1)
 
-WERR = sed 's/"\(.*\)" Line \([0-9]\+\):/\1:\2:/g' |awk 'BEGIN{r=0} IGNORECASE=1;/error:|warning:|failure:/{r=1} 1; END{exit(r)}'
+WERR = sed 's/"\(.*\)" Line \([0-9]\+\):/\1:\2:/g' |awk 'BEGIN{r=0} IGNORECASE=1;/error:|warning:|failure:/{r=1}; END{exit(r)}'
 
 # isim executables don't work without this
 export XILINX
