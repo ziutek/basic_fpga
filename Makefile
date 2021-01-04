@@ -73,7 +73,7 @@ TEST_EXES = $(foreach test,$(TEST_NAMES),build/isim_$(test)$(EXE))
 RUN = @echo "=-=-=-=-= $(1) =-=-=-=-="; \
 	cd build && $(XILINX)/bin/$(XILINX_PLATFORM)/$(1)
 
-WERR = sed 's/"\(.*\)" Line \([0-9]\+\):/\1:\2:/g' |awk 'BEGIN{r=0} /ERROR|WARNING/{r=1} 1; END{exit(r)}'
+WERR = sed 's/"\(.*\)" Line \([0-9]\+\):/\1:\2:/g' |awk 'BEGIN{r=0} IGNORECASE=1;/error:|warning:|failure:/{r=1} 1; END{exit(r)}'
 
 # isim executables don't work without this
 export XILINX
@@ -86,7 +86,7 @@ export XILINX
 default: $(BITFILE)
 
 clean:
-	rm -rf build sim obj_dir
+	rm -rf build ghdl obj_dir *.vcd
 
 build/$(PROJECT).prj: project.cfg
 	@echo "Updating $@"
@@ -188,11 +188,18 @@ endif
 # Simulation
 ###########################################################################
 
-sim: sim.cpp obj_dir/V$(TOPLEVEL)__ALL.a
-	g++ -I /usr/share/verilator/include /usr/share/verilator/include/verilated.cpp /usr/share/verilator/include/verilated_vcd_c.cpp sim.cpp obj_dir/V$(TOPLEVEL)__ALL.a  -o sim
+verilator: sim.cpp obj_dir/V$(TOPLEVEL)__ALL.a
+	@g++ -I /usr/share/verilator/include /usr/share/verilator/include/verilated.cpp /usr/share/verilator/include/verilated_vcd_c.cpp sim.cpp obj_dir/V$(TOPLEVEL)__ALL.a  -o sim
 
 obj_dir/V$(TOPLEVEL)__ALL.a: $(VSOURCE)
-	verilator -Wall --trace -cc $(VSOURCE)
-	make -C obj_dir -f V$(TOPLEVEL).mk
+	@verilator -Wall --trace -cc $(VSOURCE)
+	@make -C obj_dir -f V$(TOPLEVEL).mk
+
+ghdl: *.vhdl
+	@mkdir -p ghdl
+	@ghdl -a --workdir=ghdl *.vhdl
+	@ghdl -r --workdir=ghdl $(TOPLEVEL)Sim --vcd=sim.vcd
+
+.PHONY: clean verilator ghdl
 
 # vim: set filetype=make: #

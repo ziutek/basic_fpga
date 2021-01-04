@@ -1,5 +1,6 @@
 build
 __pycache__
 obj_dir
+ghdl
 sim
 *.vcd

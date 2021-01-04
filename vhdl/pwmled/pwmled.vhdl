@@ -1,42 +1,27 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
-use IEEE.numeric_std.ALL;
+library ieee;
+use ieee.numeric_bit.all;
 
 entity PWMLED is
 	generic (
-		pwmBits:   integer  := 9;
-		cntBits:   integer  := 26;
-		clkCntLen: positive := 100
+		pwmBits : positive := 12;
+		cntBits : positive := 17
 	);
 	port (
-		clk50:      in  std_logic;
-		led0, led1: out std_logic
+		clk50      : in  bit;
+		led0, led1 : out bit
 	);
-end entity;
+end;
 
-architecture str of PWMLED is
-	signal cnt:    unsigned(cntBits - 1 downto 0);
-	signal pwmOut: std_logic;
-
-	alias dutyCycle is cnt(cnt'high downto cnt'length - pwmBits);
+architecture default of PWMLED is
+	signal cnt : unsigned(cntBits+pwmBits-1 downto 0);
 begin
-	led0 <= pwmOut;
-	led1 <= '1';
+	assert cntBits > pwmBits;
 
-	PWM: entity work.PWM(rtl)
-	generic map (
-		pwmBits   => pwmBits,
-		clkCntLen => clkCntLen
-	)
-	port map (
-		clk       => clk50,
-		dutyCycle => dutyCycle,
-		pwmOut    => pwmOut
-	);
+	pwm : entity work.PWM(closed)
+		port map (clk50, cnt(cnt'high downto cntBits), led0);
 
-	Modulate:
-	process (clk50) begin if rising_edge(clk50) then
-			cnt <= cnt + 1;
-	end if; end process;
-end architecture;
+	process begin wait until rising_edge(clk50);
+		cnt <= cnt + 1;
+		led1 <= cnt(cnt'high-1);
+	end process;
+end;

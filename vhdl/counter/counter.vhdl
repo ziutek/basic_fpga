@@ -1,19 +1,24 @@
+library ieee;
+use ieee.numeric_bit.all;
+
 entity Counter is
 	port(
-		clock: in  bit;
-		reset: in  bit;
-		count: out natural
+		clock : in  bit;
+		reset : in  bit;
+		count : out natural
 	);
-end entity;
+end;
 
-architecture sync of Counter is
-	signal cnt: natural;
+architecture default of Counter is
+	signal cnt : natural;
 begin
-	process(clock) begin if rising_edge(clock) then
-		if reset then
-			count <= 0;
+	process begin wait until rising_edge(clock);
+		if reset = '1' then
+			cnt <= 0;
 		else
-			count <= count + 1;
+			cnt <= cnt + 1;
 		end if;
-	end if; end process;
-end architecture;
+	end process;
+
+	count <= cnt;
+end;

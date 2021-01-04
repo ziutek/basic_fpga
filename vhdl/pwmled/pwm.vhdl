@@ -1,44 +1,41 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
-use IEEE.numeric_std.ALL;
+library ieee;
+use ieee.numeric_bit.all;
 
 entity PWM is
-	generic (
-		pwmBits:   integer;
-		clkCntLen: positive := 1
-	);
 	port (
-		clk:       in  std_logic;
-		dutyCycle: in  unsigned(pwmBits-1 downto 0);
-		pwmOut:    out std_logic
+		clk    : in  bit;
+		duty   : in  unsigned;
+		pwmOut : out bit
 	);
-end entity;
+end;
 
-architecture rtl of PWM is
-	signal pwmCnt: unsigned(pwmBits-1 downto 0);
-	signal clkCnt: integer range 0 to clkCntLen-1;
+architecture default of PWM is
+	signal cnt : unsigned(duty'left downto duty'right);
 begin
-	ClkCntProc:
-	process(clk) begin if rising_edge(clk) then
-		if clkCnt = clkCntLen-1 then
-			clkCnt <= 0;
+	process begin wait until rising_edge(clk);
+		cnt <= cnt + 1;
+		if cnt < duty then
+			pwmOut <= '1';
 		else
-			clkCnt <= clkCnt + 1;
-		end if;
-	end if; end process;
-
-	PWMProc:
-	process(clk) begin if rising_edge(clk) then
-		if clkCntLen=1 or clkCnt=0 then
-			pwmCnt <= pwmCnt + 1;
 			pwmOut <= '0';
-			if pwmCnt = unsigned(to_signed(-2, pwmCnt'length)) then
-				pwmCnt <= unsigned(0);
-			end if;
-			if pwmCnt < dutyCycle then
-				pwmOut <= '1';
-			end if;
 		end if;
-	end if; end process;
-end architecture;
+	end process;
+end;
+
+architecture closed of PWM is
+	signal cnt : unsigned(duty'left downto duty'right);
+begin
+	process begin wait until rising_edge(clk);
+		if cnt = unsigned(to_signed(-2, cnt'length)) then
+			cnt <= (others => '0');
+		else
+			cnt <= cnt + 1;
+		end if;
+		if cnt < duty then
+			pwmOut <= '1';
+		else
+			pwmOut <= '0';
+		end if;
+		--pwmOut <= bit'val(boolean'pos(cnt < duty));
+	end process;
+end;
