@@ -23,10 +23,11 @@ begin
 end;
 
 architecture closed of PWM is
-	signal cnt : unsigned(duty'left downto duty'right);
+	signal   cnt    : unsigned(duty'left downto duty'right);
+	constant cntMax : unsigned := unsigned(to_signed(-2, cnt'length));
 begin
 	process begin wait until rising_edge(clk);
-		if cnt = unsigned(to_signed(-2, cnt'length)) then
+		if cnt = cntMax then
 			cnt <= (others => '0');
 		else
 			cnt <= cnt + 1;
@@ -36,6 +37,7 @@ begin
 		else
 			pwmOut <= '0';
 		end if;
-		--pwmOut <= bit'val(boolean'pos(cnt < duty));
 	end process;
 end;
+
+-- alternate bool to bit conversion: pwmOut <= bit'val(boolean'pos(cnt < duty));

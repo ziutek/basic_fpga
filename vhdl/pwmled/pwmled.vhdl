@@ -15,7 +15,7 @@ end;
 architecture default of PWMLED is
 	signal cnt : unsigned(cntBits+pwmBits-1 downto 0);
 begin
-	assert cntBits > pwmBits;
+	assert cntBits >= pwmBits;
 
 	pwm : entity work.PWM(closed)
 		port map (clk50, cnt(cnt'high downto cntBits), led0);
