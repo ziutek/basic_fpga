@@ -5,16 +5,16 @@ entity Counter is
 	port(
 		clock : in  bit;
 		reset : in  bit;
-		count : out natural
+		count : out unsigned
 	);
 end;
 
 architecture default of Counter is
-	signal cnt : natural;
+	signal cnt : unsigned(count'range);
 begin
 	process begin wait until rising_edge(clock);
 		if reset = '1' then
-			cnt <= 0;
+			cnt <= (others => '0');
 		else
 			cnt <= cnt + 1;
 		end if;

@@ -10,7 +10,7 @@ entity PWM is
 end;
 
 architecture default of PWM is
-	signal cnt : unsigned(duty'left downto duty'right);
+	signal cnt : unsigned(duty'range);
 begin
 	process begin wait until rising_edge(clk);
 		cnt <= cnt + 1;
@@ -23,7 +23,7 @@ begin
 end;
 
 architecture closed of PWM is
-	signal   cnt    : unsigned(duty'left downto duty'right);
+	signal   cnt    : unsigned(duty'range);
 	constant cntMax : unsigned := unsigned(to_signed(-2, cnt'length));
 begin
 	process begin wait until rising_edge(clk);

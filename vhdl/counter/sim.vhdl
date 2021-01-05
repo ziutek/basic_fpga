@@ -7,8 +7,7 @@ end entity;
 architecture sim of CounterSim is
 	signal clk:  bit;
 	signal rst:  bit;
-	signal data: natural;
-	signal eos:  boolean;
+	signal data: unsigned(3 downto 0);
 begin
 	-- Instantiation of the DUT
 	dut: entity work.Counter(default)
@@ -19,7 +18,6 @@ begin
 		);
 
 	-- A clock generating process with a 2ns clock period.
-	-- Infinite loop, the clock will never stop toggling.
 	process	begin
 		for i in 1 to 30 loop
 			clk <= '0';
