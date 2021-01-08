@@ -23,15 +23,14 @@ begin
 			CLKIN_PERIOD   => 20.0, --  50 MHz
 			CLKFBOUT_MULT  => 8,    -- 400 MHz
 			CLKOUT0_DIVIDE => 4     -- 100 MHz
-		)
-		port map (
+		) port map (
 			CLKIN    => clk50,
 			CLKFBIN  => fb,
 			CLKFBOUT => fb,
 			CLKOUT0  => clk100,
 			RST      => '0'
 		);
-	pllBuf : BUFG port map(I => clk100, O => sysClk);
+	pllBuf : BUFG port map (I => clk100, O => sysClk);
 
 	process begin wait until rising_edge(sysClk);
 		cnt <= cnt + 1;

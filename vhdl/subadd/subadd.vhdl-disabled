@@ -1,0 +1,19 @@
+library ieee;
+use ieee.numeric_bit.all;
+use work.local.all;
+
+entity SubAdd is
+	port (
+		clk  : in  bit;
+		i    : in  SubAddInp;
+		d, s : out unsigned
+	);
+end;
+
+architecture default of SubAdd is
+begin
+	process begin wait until rising_edge(clk);
+		d <= i.a - i.b;
+		s <= i.a + i.b;
+	end process;
+end;

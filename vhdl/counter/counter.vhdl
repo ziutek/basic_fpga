@@ -2,7 +2,7 @@ library ieee;
 use ieee.numeric_bit.all;
 
 entity Counter is
-	port(
+	port (
 		clock : in  bit;
 		reset : in  bit;
 		count : out unsigned

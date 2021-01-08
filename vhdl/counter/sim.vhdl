@@ -11,7 +11,7 @@ architecture sim of CounterSim is
 begin
 	-- Instantiation of the DUT
 	dut: entity work.Counter(default)
-		port map(
+		port map (
 			clock => clk,
 			reset => rst,
 			count => data
@@ -40,4 +40,4 @@ begin
 			wait until rising_edge(clk);
 		end loop;
 	end process;
-end architecture;
+end;
