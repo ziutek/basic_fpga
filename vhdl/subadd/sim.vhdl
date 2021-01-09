@@ -5,7 +5,7 @@ use work.subadd;
 entity SubAddSim is
 end;
 
-architecture default of SubAddSim is
+architecture sim of SubAddSim is
 	signal clk        : bit;
 	signal a, b, d, s : unsigned(7 downto 0);
 begin
@@ -34,7 +34,7 @@ begin
 	end process;
 end;
 
-configuration cfg1 of all is
+configuration cfg1 of SubAddSim is
 	for sim
 		for all : subadd.C
 			use entity work.subaddEntity(default);
