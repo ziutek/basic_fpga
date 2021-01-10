@@ -21,7 +21,23 @@ if [ $# -gt 0 ]; then
 			XST="$XST -compileonly yes"
 		;;
 		prog)
-			xc3sprog -c bbv2_2 $WDIR/$PROJ.bit
+			cd $WDIR
+
+			echo
+			echo '+++++++++++       bitgen       +++++++++++'
+			echo
+
+			bitgen -w $PROJ
+
+			echo
+			echo '+++++++++++      xc3sprog      +++++++++++'
+			echo
+
+			xc3sprog -c bbv2_2 $PROJ.bit
+
+			echo
+			echo '+++++++++++        done        +++++++++++'
+
 			exit
 		;;
 		*)
@@ -38,6 +54,7 @@ fi
 mkdir -p $WDIR
 rm -rf $WDIR/*
 
+echo
 echo '+++++++++++        sv2v        +++++++++++'
 echo
 
@@ -62,7 +79,7 @@ echo
 echo run -top $TOP $XST -p $PART -ifn $PROJ.prj -ifmt mixed -ofn $PROJ.ngc -ofmt NGC >$PROJ.xst
 
 werr() {
-	sed 's/"\(.*\)" Line \([0-9]\+\):/\1:\2:/g' \
+	sed 's/errors/ERROR/g; s/warnings/WARNING/g; s/infos/INFO/g; s/"\(.*\)" Line \([0-9]\+\):/\1:\2:/g' \
 		| awk 'BEGIN{r=0} IGNORECASE=1;/error:|warning:|failure:/{r=1}; END{exit(r)}'
 }
 
@@ -89,12 +106,6 @@ echo '+++++++++++        par         +++++++++++'
 echo
 
 par -mt 4 -w $PROJ $PROJ
-
-echo
-echo '+++++++++++       bitgen       +++++++++++'
-echo
-
-bitgen -w $PROJ
 
 echo
 echo '+++++++++++        done        +++++++++++'

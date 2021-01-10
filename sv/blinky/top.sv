@@ -40,7 +40,5 @@ module blinky #(
 		led0 <= led0 ^ (counter == 0);
 	end
 
-	always_comb begin
-		led1 = !led0;
-	end
+	assign	led1 = !led0;
 endmodule
