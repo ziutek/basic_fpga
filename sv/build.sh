@@ -13,7 +13,7 @@ WDIR='build'
 CONS='cons.ucf'
 XST='-opt_mode area -opt_level 1'
 
-. ./build.cfg
+. ./proj.cfg
 
 if [ $# -gt 0 ]; then
 	case $1 in

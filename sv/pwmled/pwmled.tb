@@ -1,0 +1,15 @@
+module TB;
+	initial begin
+		$display("Hello, World");
+		$finish;
+	end
+/*
+	localparam freqMHz = 50;
+	logic clk;
+	always #(1e9/(2*freqMHz) ns) clk = ~clk;
+
+	logic led0, led1;
+	pwmled PWM (clk, led0, led1);
+*/
+endmodule
+
