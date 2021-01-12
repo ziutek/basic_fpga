@@ -20,12 +20,12 @@ entity SDRAMC is
 		busy  : out bit;                             -- busy signal
 
 		-- SDRAM signals
-		CLK  : out   std_ulogic;                                      -- clock
-		CKE  : out   std_ulogic;                                      -- clock enable
-		CMD  : out   work.sdram.Command;                                   -- 4-bit command
-		BA   : out   std_ulogic_vector(bankBits-1 downto 0);          -- bank address
-		A    : out   std_ulogic_vector(addrBits-dataBits-1 downto 0); -- address
-		D    : inout std_ulogic_vector(dataBits-1 downto 0)           -- data
+		CLK  : out   std_ulogic;                             -- clock
+		CKE  : out   std_ulogic;                             -- clock enable
+		CMD  : out   work.sdram.Command;                     -- 4-bit command
+		BA   : out   std_ulogic_vector(bankBits-1 downto 0); -- bank address
+		A    : out   std_ulogic_vector(addrBits-1 downto 0); -- address
+		D    : inout std_ulogic_vector(dataBits-1 downto 0)  -- data
 	);
 end;
 
