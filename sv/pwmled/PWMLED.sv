@@ -1,24 +1,24 @@
+`default_nettype none
+
 module PWMLED #(
-	dutyBits = 19,
-	cntBits  = 23
+	dutyBits = 3, //19,
+	cntBits  = 4 //23
 ) (
-	input  logic clk50,
-	output logic led0,
-	output logic led1
+	input  wire clk,
+	output wire led0, led1
 );
-	localparam dutyMax = {dutyBits {1'sb1}};
+	reg  [dutyBits-1:0] duty;
+	wire                pwm;
 
-	logic [cntBits-1:0]  cnt;
-	logic [dutyBits-1:0] duty;
-	logic                pwm;
-
-	PWM #(dutyBits) pwm0 (clk50, duty, pwm);
+	PWM #(dutyBits) pwm0 (.clk, .duty, .out(pwm));
 
 	wire isZero = duty[0] == 0;
 	wire isMax  = duty[$high(duty)] == 1;
-	logic dir;
 
-	always_ff @(posedge clk50) begin
+	reg [cntBits-1:0] cnt;
+	reg               dir;
+
+	always_ff @(posedge clk) begin
 		cnt <= cnt + 1'b1;
 		if (cnt == '1) begin
 			if (isZero) begin
@@ -30,13 +30,12 @@ module PWMLED #(
 				dir <= 0;
 			end
 			if (!isZero && !isMax) begin
-				duty <= dir ? (duty<<1)|$size(duty)'(1) : duty>>1;
+				duty <= dir ? (duty << 1) | 'b1 : duty >> 1;
 			end;
 		end
 	end
 
-	always_comb begin
-		led0 = ~pwm;
+	assign
+		led0 = ~pwm,
 		led1 = 1;
-	end
 endmodule

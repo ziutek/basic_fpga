@@ -1,11 +1,13 @@
+`default_nettype none
+
 module PWM #(
 	dutyBits = 2
 ) (
-	input  logic                clk,
-	input  logic [dutyBits-1:0] duty,
-	output logic                out
+	input  wire                clk,
+	input  wire [dutyBits-1:0] duty,
+	output wire                out
 );
-	logic [dutyBits-1:0] cnt;
+	reg [dutyBits-1:0] cnt;
 
 	always_ff @(posedge clk) begin
 		cnt <= cnt + 1'b1;

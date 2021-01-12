@@ -8,11 +8,11 @@ VerilatedVcdC *v;
 int timeStamp;
 
 void tick(VPWMLED *tb) {
-	tb->clk50 = 0;
+	tb->clk = 0;
 	tb->eval();
 	v->dump(timeStamp);
 	timeStamp++;
-	tb->clk50 = 1;
+	tb->clk = 1;
 	tb->eval();
 	v->dump(timeStamp);
 	timeStamp++;
