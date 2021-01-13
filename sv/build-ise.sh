@@ -10,7 +10,7 @@ SV=
 V=
 VHDL=
 WDIR='build'
-CONS='cons.ucf'
+UCF='proj.ucf'
 XST='-opt_mode area -opt_level 1'
 
 . ./proj.cfg
@@ -93,7 +93,7 @@ fi
 echo '+++++++++++      ngdbuild      +++++++++++'
 echo
 
-ngdbuild -p $PART -uc ../$CONS $PROJ
+ngdbuild -p $PART -uc ../$UCF $PROJ
 
 echo
 echo '+++++++++++        map         +++++++++++'

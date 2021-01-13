@@ -1,8 +1,8 @@
 `default_nettype none
 
 module PWMLED #(
-	dutyBits = 3, //19,
-	cntBits  = 4 //23
+	dutyBits = 19,
+	cntBits  = 23
 ) (
 	input  wire clk,
 	output wire led0, led1
@@ -30,7 +30,7 @@ module PWMLED #(
 				dir <= 0;
 			end
 			if (!isZero && !isMax) begin
-				duty <= dir ? (duty << 1) | 'b1 : duty >> 1;
+				duty <= dir ? (duty << 1) | dutyBits'(1) : duty >> 1;
 			end;
 		end
 	end

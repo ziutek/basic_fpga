@@ -8,7 +8,9 @@ module SDRAMC #(
 	bankBits = 2,
 	rowBits  = 13,
 	colBits  = 9,
-	dataBits = 16
+	dataBits = 16,
+
+	clkHz = 100_000_000
 ) (
 	// Interface
 	input  clk,                                 // clock
