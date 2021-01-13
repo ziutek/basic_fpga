@@ -1,11 +1,11 @@
 `default_nettype none
 
 module blinky (
-	input  wire clk50,
-	output reg  led0,
-	output wire led1
+	input  wire  clk50,
+	output logic led0,
+	output wire  led1
 );
-	wire loop, sysClk, clk100;
+	wire loop, clk100, sysClk;
 
 	PLL_BASE #(
 		.CLKIN_PERIOD(20.000), // 50 MHz.
@@ -27,7 +27,7 @@ module blinky (
 
 	BUFG bufg(.O(sysClk), .I(clk100));
 
-	reg [26:0] counter;
+	logic [26:0] counter;
 
 	always_ff @(posedge sysClk) begin
 		if (counter == 'd99_999_999) begin

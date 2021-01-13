@@ -4,19 +4,20 @@ module PWMLED #(
 	dutyBits = 19,
 	cntBits  = 23
 ) (
-	input  wire clk,
-	output wire led0, led1
+	input  wire  clk,
+	output logic led0,
+	output wire  led1
 );
-	reg  [dutyBits-1:0] duty;
-	wire                pwm;
+	logic [dutyBits-1:0] duty;
+	wire                 out;
 
-	PWM #(dutyBits) pwm0 (.clk, .duty, .out(pwm));
+	PWM #(dutyBits) pwm0 (.clk, .duty, .out);
 
 	wire isZero = duty[0] == 0;
 	wire isMax  = duty[$high(duty)] == 1;
 
-	reg [cntBits-1:0] cnt;
-	reg               dir;
+	logic [cntBits-1:0] cnt;
+	logic               dir;
 
 	always_ff @(posedge clk) begin
 		cnt <= cnt + 1'b1;
@@ -36,6 +37,6 @@ module PWMLED #(
 	end
 
 	assign
-		led0 = ~pwm,
+		led0 = ~out,
 		led1 = 1;
 endmodule
