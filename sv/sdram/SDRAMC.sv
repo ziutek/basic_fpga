@@ -17,21 +17,25 @@ module SDRAMC #(
 	localparam addrBits = bankBits+rowBits+colBits
 ) (
 	// Interface
-	input  wire                 clk,  // clock
-	input  wire  [addrBits-1:0] addr, // address of data word
-	input  wire                 r,    // start read transaction
-	input  wire                 w,    // start write transaction
-	input  wire  [dataBits-1:0] dw,   // data input
-	output logic [dataBits-1:0] dr,   // data output
-	output logic                busy, // busy flag
+	input
+		wire                 clk,  // clock
+		wire  [addrBits-1:0] addr, // address of data word
+		wire                 r,    // start read transaction
+		wire                 w,    // start write transaction
+		wire  [dataBits-1:0] dw,   // data input
+	output
+		logic [dataBits-1:0] dr,   // data output
+		logic                busy, // busy flag
 
 	// SDRAM signals
-	output wire                    CLK, // clock
-	output logic                   CKE, // clock enable
-	output SDRAMCmd                CMD, // 4-bit command
-	output logic    [bankBits-1:0] BA,  // bank address
-	output logic                   A,   // row/column address
-	inout  wire                    D    // data bus
+	output
+		wire                    CLK, // clock
+		logic                   CKE, // clock enable
+		SDRAMCmd                CMD, // 4-bit command
+		logic    [bankBits-1:0] BA,  // bank address
+		logic    [rowBits-1:0]  A,   // row/column address
+	inout
+		wire     [dataBits-1:0] D    // data bus
 );
 
 	localparam L = 1'b0, H = 1'b1;
